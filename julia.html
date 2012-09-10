@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>Julia Set Demo</title>
+		<style type="text/css">
+			canvas { border: 1px solid black; }
+		</style>
+	</head>
+  
+	<body onLoad="draw();">
+    
+		<canvas id="myCanvas" width="800" height="800">
+			Your browser does not support canvas element
+		</canvas>
+  
+	</body>
+	<script type="text/javascript">
+
+	    function draw() {
+
+	        var canvas = document.getElementById("myCanvas");
+	        var ctx = canvas.getContext("2d");
+	        var id = ctx.createImageData(800, 800);
+
+	        tt = 0.0;
+			ind = 0;
+			ind2 = 1;
+			gm = 1.618;
+			var aarray = [ 1-gm,gm-2,.285,0,.285,.45  ,.70176,.835,.8  ];
+			var barray = [  0  ,gm-1,  0 ,1,.01 ,.1428,-.3842,-.2321,.156];
+			
+
+	        setInterval(function() {
+	            tt = tt + 0.002;
+	            /*if (tt > 1.0) {
+					tt =0;
+					ind = (ind + 1) % 7;
+					ind2 = (ind2 + 1) % 7;
+					//console.info(ind);
+					//console.info(ind2);
+					console.info(aarray[ind]);
+					console.info(barray[ind]);
+				}
+				
+				a = tt*(aarray[ind2] - aarray[ind]) + aarray[ind];
+				b = tt*(barray[ind2] - barray[ind]) + barray[ind];
+	            */
+
+	            var w = id.width;
+	            var h = id.height;
+
+	            var ox = -1.8;
+	            var oy = -1.8;
+	            var sx = 3.6 / w;
+	            var sy = 3.6 / h;
+	            var a = Math.cos(tt)*Math.cos(tt*4.0) - (Math.sin(tt/3.0) + 1.0)*0.333;
+	            var b = Math.sin(tt)*Math.cos(tt*4.0);
+
+	            var i, j;
+	            for (i = 0; i < h; i++) {
+	                for (j = 0; j < w; j++) {
+
+	                    var x = ox + sx * j;
+	                    var y = oy + sy * i;
+	                    var n = 0;
+						var dy = 0;
+	                    while (((x * x + y * y) < 4.0) && n < 32) {
+	                        var xx = x * x - y * y + a;
+	                        y = 2.0 * x * y + b;
+	                        x = xx;
+	                        n = n + 1;
+							if (n == 3)
+							  dy = y;
+							
+	                    }
+
+	                    var r = 0;
+	                    var g = 0;
+	                    var bl = 0;
+
+	                    if (n == 32) {
+	                        /*if (dy > 0.0) {
+	                            bl = 255 - (n * 8) % 256;
+	                            r = 0;
+	                            g = 255 - (n * 8) % 256;
+	                        }
+	                        else {
+	                            bl = 0;
+	                            r = (n * 16) % 256;
+	                            g = 0;
+	                        }*/
+
+	                    }
+	                    else if (n < 255) {
+		                    lr = Math.log(x*x+y*y)/2;
+							np = n - Math.log(lr)/Math.log(2) - 0.5287;
+							sn = Math.floor(np*64);
+		
+	                        if (y > 0.0) {
+	                            r = 255 - sn % 256;
+	                            bl = 0;
+	                            g = 255 - sn % 256;
+	                        }
+	                        else {
+	                            r = 0;
+	                            bl = sn % 256;
+	                            g = 0;
+	                        }
+
+	                    }
+	                    id.data[i * w * 4 + j * 4 + 0] = r;
+	                    id.data[i * w * 4 + j * 4 + 1] = g;
+	                    id.data[i * w * 4 + j * 4 + 2] = bl;
+	                    id.data[i * w * 4 + j * 4 + 3] = 255;
+
+	                }
+	            }
+
+
+	            ctx.putImageData(id, 0, 0);
+
+	        },25);
+
+	    }
+    
+    </script>
+</html>
